@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FFFFFF;
-  --foreground: #111111;
-  --secondary: #37352F;
-  --muted: #9B9A97;
-  --border: #E8E8E6;
-  --card: #F7F7F5;
-  --card-hover: #F1F1EF;
-  --accent-urgency: #2F4F4F; /* Dark slate grey for urgency indicators only */
-  --accent-action: #4B5563; /* Medium grey for primary actions */
+  --background: #FAFAFA;
+  --foreground: #0F172A; /* Slate 900 */
+  --secondary: #334155; /* Slate 700 */
+  --muted: #64748B; /* Slate 500 */
+  --border: #E2E8F0; /* Slate 200 */
+  --card: #FFFFFF;
+  --card-hover: #F8FAFC; /* Slate 50 */
+  --accent-urgency: #B91C1C; /* Premium Red */
+  --accent-action: #2563EB; /* Premium Blue */
+  
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
 @theme inline {
@@ -85,7 +89,9 @@ tr:hover td {
 
 /* Utilities */
 .glass-panel {
-  /* Removing glassmorphism, making it a flat bordered card */
-  background: var(--background);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
+  box-shadow: var(--glass-shadow);
 }

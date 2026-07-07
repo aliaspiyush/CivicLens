@@ -20,7 +20,9 @@ export default function HomePage() {
         </section>
 
         {/* Gemini Explainer Block */}
-        <section className="border border-[var(--border)] bg-[var(--card)] rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
+        <section className="relative overflow-hidden border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-blue-50/30 rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
+          {/* Subtle glow effect behind */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles size={20} className="text-[var(--foreground)]" />
@@ -39,33 +41,25 @@ export default function HomePage() {
 
         {/* Existing Navigation Cards */}
         <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link
-              href="/submit"
-              className="border border-[var(--border)] bg-[var(--background)] p-6 rounded hover:bg-[var(--card-hover)] transition-colors flex flex-col gap-3 group"
-            >
-              <h2 className="text-lg font-medium flex items-center justify-between">
-                Citizen Submission
-                <ArrowRight size={18} className="text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" />
-              </h2>
-              <p className="text-sm text-[var(--muted)]">
-                Report civic issues in your ward. Supports text in multiple languages, audio recordings, and photo evidence.
-              </p>
-            </Link>
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <Link href="/submit" className="group block p-8 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+            <h2 className="text-2xl font-semibold mb-3 flex items-center gap-2 text-[var(--foreground)]">
+              Citizen Portal <ArrowRight size={20} className="text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" />
+            </h2>
+            <p className="text-[var(--secondary)] leading-relaxed">
+              Submit your local concerns, track infrastructure gaps, and ensure your voice is heard by your representative. Multilingual support enabled.
+            </p>
+          </Link>
 
-            <Link
-              href="/mp/submissions"
-              className="border border-[var(--border)] bg-[var(--background)] p-6 rounded hover:bg-[var(--card-hover)] transition-colors flex flex-col gap-3 group"
-            >
-              <h2 className="text-lg font-medium flex items-center justify-between">
-                MP Dashboard
-                <Lock size={16} className="text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" />
-              </h2>
-              <p className="text-sm text-[var(--muted)]">
-                Authorized access for Members of Parliament and staff to review AI processed submissions and evidence backed themes.
-              </p>
-            </Link>
-          </div>
+          <Link href="/login" className="group block p-8 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+            <h2 className="text-2xl font-semibold mb-3 flex items-center gap-2 text-[var(--foreground)]">
+              MP Dashboard <ArrowRight size={20} className="text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" />
+            </h2>
+            <p className="text-[var(--secondary)] leading-relaxed">
+              Access AI-synthesized priority themes. Review evidence-backed citizen demands mapped directly against municipal data and budgets.
+            </p>
+          </Link>
+        </div>
         </section>
 
       </div>

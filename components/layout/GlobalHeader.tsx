@@ -36,7 +36,8 @@ export default function GlobalHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full h-16 bg-[var(--background)] border-b border-[var(--border)] flex items-center justify-between px-6">
+    <header className="sticky top-0 z-50 w-full glass-panel transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       {/* Left: Brand */}
       <Link href="/" className="flex items-center gap-2 no-underline text-[var(--foreground)] hover:opacity-80 transition-opacity">
         <Landmark size={20} className="text-[var(--foreground)]" />
@@ -104,6 +105,7 @@ export default function GlobalHeader() {
             Powered by Gemini 2.5
           </span>
         </div>
+      </div>
       </div>
     </header>
   );

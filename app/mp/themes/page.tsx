@@ -126,14 +126,14 @@ export default function MPThemesPage() {
             const isApiFailed = theme.api_failed;
 
             return (
-              <div key={theme.id || index} className="bg-[var(--background)] border border-[var(--border)] rounded flex flex-col relative overflow-hidden">
+              <div key={theme.id || index} className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col relative overflow-hidden group">
                 {/* Highlight banner for newly synthesized items */}
                 {!theme.id?.includes("-") && parseInt(theme.id || "0") > 1000000 && (
-                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
                 )}
 
                 {/* Header */}
-                <div className="p-5 border-b border-[var(--border)] flex items-start justify-between">
+                <div className="p-5 border-b border-[var(--border)] flex items-start justify-between bg-[var(--background)]">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-700">
@@ -191,11 +191,13 @@ export default function MPThemesPage() {
                               View Source Data
                             </button>
                             
-                            {expandedSources.has(theme.id || String(index)) && (
-                              <div className="mt-2 p-3 bg-[var(--background)] border border-[var(--border)] rounded font-mono text-[11px] text-[var(--secondary)] whitespace-pre-wrap">
+                            <div 
+                              className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSources.has(theme.id || String(index)) ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0 mt-0"}`}
+                            >
+                              <div className="p-3 bg-[var(--background)] border border-[var(--border)] rounded font-mono text-[11px] text-[var(--secondary)] whitespace-pre-wrap shadow-inner">
                                 {theme.source_data_preview || "Live data sourced from gemini_audit_log constraints."}
                               </div>
-                            )}
+                            </div>
                           </div>
                         )}
                       </>
