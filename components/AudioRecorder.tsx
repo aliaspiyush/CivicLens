@@ -109,22 +109,23 @@ export default function AudioRecorder({
           <button
             type="button"
             onClick={isRecording ? stopRecording : startRecording}
-            className={`recorder-ring ${isRecording ? "recording" : "idle"}`}
+            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
+              isRecording
+                ? "bg-red-50 text-red-600 border border-red-200"
+                : "bg-[var(--card)] hover:bg-[var(--card-hover)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+            }`}
             aria-label={isRecording ? "Stop recording" : "Start recording"}
           >
             {isRecording ? (
-              <Square size={24} className="text-danger" fill="currentColor" />
+              <Square size={24} fill="currentColor" />
             ) : (
-              <Mic size={28} style={{ color: "var(--muted)" }} />
+              <Mic size={24} />
             )}
           </button>
-          <p className="text-sm" style={{ color: "var(--muted)" }}>
+          <p className="text-sm text-[var(--muted)]">
             {isRecording ? (
-              <span className="flex items-center gap-2">
-                <span
-                  className="w-2 h-2 rounded-full animate-pulse"
-                  style={{ background: "var(--danger)" }}
-                />
+              <span className="flex items-center gap-2 text-red-600 font-medium">
+                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                 Recording... {formatTime(duration)}
               </span>
             ) : (
@@ -133,30 +134,23 @@ export default function AudioRecorder({
           </p>
         </>
       ) : (
-        <div
-          className="flex items-center gap-4 w-full p-4 rounded-xl"
-          style={{
-            background: "var(--input-bg)",
-            border: "1px solid var(--input-border)",
-          }}
-        >
+        <div className="flex items-center gap-4 w-full p-4 rounded bg-[var(--card)] border border-[var(--border)]">
           <button
             type="button"
             onClick={togglePlayback}
-            className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: "var(--accent-glow)" }}
+            className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-white border border-[var(--border)] text-[var(--foreground)] hover:bg-gray-50"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
-              <Pause size={18} className="text-accent-light" />
+              <Pause size={16} />
             ) : (
-              <Play size={18} className="text-accent-light" style={{ marginLeft: 2 }} />
+              <Play size={16} style={{ marginLeft: 2 }} />
             )}
           </button>
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">Voice Recording</p>
-            <p className="text-xs" style={{ color: "var(--muted)" }}>
+            <p className="text-sm font-medium text-[var(--foreground)] truncate">Voice Recording</p>
+            <p className="text-xs text-[var(--muted)]">
               Duration: {formatTime(duration)}
             </p>
           </div>
@@ -164,10 +158,10 @@ export default function AudioRecorder({
           <button
             type="button"
             onClick={clearRecording}
-            className="btn-danger px-3 py-2"
+            className="p-2 text-[var(--muted)] hover:text-red-600 transition-colors"
             aria-label="Remove recording"
           >
-            <Trash2 size={14} />
+            <Trash2 size={16} />
           </button>
 
           {audioUrl && (

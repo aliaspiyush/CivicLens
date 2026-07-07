@@ -52,30 +52,18 @@ export default function AdminRawPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[var(--background)]">
       {/* Header */}
-      <header
-        className="sticky top-0 z-50 px-6 py-4 flex items-center gap-4"
-        style={{
-          background: "rgba(10, 10, 18, 0.8)",
-          backdropFilter: "blur(20px)",
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
+      <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between border-b border-[var(--border)] bg-[var(--background)]">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-medium no-underline"
-          style={{ color: "var(--muted)" }}
+          className="flex items-center gap-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
         >
           <ArrowLeft size={16} />
-          Home
+          Back to Home
         </Link>
-        <div className="flex-1" />
-        <h1
-          className="text-sm font-semibold tracking-wide"
-          style={{ color: "var(--accent-light)" }}
-        >
-          CivicLens Admin
+        <h1 className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
+          Raw Data Explorer
         </h1>
       </header>
 
@@ -83,39 +71,32 @@ export default function AdminRawPage() {
       <main className="flex-1 px-4 md:px-8 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Title bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 animate-fade-in-up">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-2xl font-bold mb-1">Raw Submissions</h2>
-              <p className="text-sm" style={{ color: "var(--muted)" }}>
-                All citizen submissions, newest first. {submissions.length} total.
+              <h2 className="text-xl font-semibold mb-1 text-[var(--foreground)]">Raw Submissions Table</h2>
+              <p className="text-sm text-[var(--muted)]">
+                Unprocessed citizen submissions from all wards. ({submissions.length} total)
               </p>
             </div>
             <button
               onClick={fetchSubmissions}
               disabled={isLoading}
-              className="btn-secondary"
+              className="flex items-center gap-2 px-3 py-1.5 border border-[var(--border)] rounded text-sm text-[var(--foreground)] hover:bg-[var(--card-hover)] transition-colors"
             >
               {isLoading ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : (
                 <RefreshCw size={14} />
               )}
-              Refresh
+              Refresh Data
             </button>
           </div>
 
           {/* Error State */}
           {error && (
-            <div
-              className="p-4 rounded-xl mb-6"
-              style={{
-                background: "rgba(239, 68, 68, 0.1)",
-                border: "1px solid rgba(239, 68, 68, 0.2)",
-                color: "#f87171",
-              }}
-            >
+            <div className="p-4 rounded border border-red-200 bg-red-50 text-red-700 mb-6">
               <p className="text-sm font-medium">Error: {error}</p>
-              <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+              <p className="text-xs mt-1 opacity-80">
                 Check that your Supabase credentials are configured and the submissions table exists.
               </p>
             </div>
@@ -124,27 +105,19 @@ export default function AdminRawPage() {
           {/* Loading */}
           {isLoading && (
             <div className="flex items-center justify-center py-20">
-              <Loader2
-                size={32}
-                className="animate-spin"
-                style={{ color: "var(--accent)" }}
-              />
+              <Loader2 size={32} className="animate-spin text-[var(--muted)]" />
             </div>
           )}
 
           {/* Empty State */}
           {!isLoading && !error && submissions.length === 0 && (
-            <div className="glass-card p-16 text-center">
-              <Inbox
-                size={48}
-                className="mx-auto mb-4"
-                style={{ color: "var(--muted)" }}
-              />
-              <h3 className="text-lg font-semibold mb-2">No submissions yet</h3>
-              <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>
+            <div className="border border-[var(--border)] rounded bg-[var(--card)] p-16 text-center">
+              <Inbox size={32} className="mx-auto mb-4 text-[var(--muted)]" />
+              <h3 className="text-base font-medium mb-1 text-[var(--foreground)]">No submissions found</h3>
+              <p className="text-sm text-[var(--muted)] mb-6">
                 Citizen submissions will appear here once they start coming in.
               </p>
-              <Link href="/submit" className="btn-primary no-underline">
+              <Link href="/submit" className="text-sm border border-[var(--border)] bg-white px-4 py-2 rounded hover:bg-gray-50 transition-colors">
                 Submit Test Feedback
               </Link>
             </div>
@@ -152,105 +125,52 @@ export default function AdminRawPage() {
 
           {/* Table */}
           {!isLoading && submissions.length > 0 && (
-            <div className="glass-card overflow-hidden animate-fade-in-up">
+            <div className="border border-[var(--border)] rounded bg-[var(--background)] overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="civic-table">
-                  <thead>
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-[var(--card)] border-b border-[var(--border)]">
                     <tr>
-                      <th>Created At</th>
-                      <th>Ward</th>
-                      <th>Raw Text</th>
-                      <th>Audio</th>
-                      <th>Image</th>
-                      <th>ID</th>
+                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Date</th>
+                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Ward</th>
+                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Raw Text</th>
+                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Audio</th>
+                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Image</th>
+                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">ID</th>
                     </tr>
                   </thead>
                   <tbody>
                     {submissions.map((sub) => (
-                      <tr key={sub.id}>
-                        <td className="whitespace-nowrap">
-                          <span className="text-xs">{formatDate(sub.created_at)}</span>
+                      <tr key={sub.id} className="border-b border-[var(--border)] hover:bg-[var(--card-hover)] transition-colors">
+                        <td className="py-3 px-4 whitespace-nowrap text-sm text-[var(--secondary)]">
+                          {formatDate(sub.created_at)}
                         </td>
-                        <td>
-                          <span className="badge badge-accent">{sub.ward}</span>
+                        <td className="py-3 px-4 text-sm text-[var(--foreground)]">
+                          {sub.ward}
                         </td>
-                        <td style={{ maxWidth: 320 }}>
-                          {sub.raw_text ? (
-                            <p className="text-sm leading-relaxed line-clamp-3">
-                              {sub.raw_text}
-                            </p>
-                          ) : (
-                            <span className="text-xs" style={{ color: "var(--muted)" }}>
-                              — No text —
-                            </span>
-                          )}
+                        <td className="py-3 px-4 text-sm text-[var(--secondary)] max-w-xs truncate">
+                          {sub.raw_text ? sub.raw_text : <span className="text-[var(--muted)] italic">None</span>}
                         </td>
-                        <td>
+                        <td className="py-3 px-4">
                           {sub.audio_url ? (
-                            <div className="flex flex-col gap-2">
-                              <span className="badge badge-success">
-                                <Mic size={10} /> Audio
-                              </span>
-                              <audio
-                                controls
-                                preload="none"
-                                src={sub.audio_url}
-                                className="h-8 w-40"
-                                style={{ filter: "invert(1) hue-rotate(180deg)" }}
-                              />
-                            </div>
+                            <audio controls preload="none" src={sub.audio_url} className="h-8 w-40 grayscale opacity-80" />
                           ) : (
-                            <span className="text-xs" style={{ color: "var(--muted)" }}>
-                              —
-                            </span>
+                            <span className="text-sm text-[var(--muted)]">—</span>
                           )}
                         </td>
-                        <td>
+                        <td className="py-3 px-4">
                           {sub.image_url ? (
-                            <div className="flex flex-col gap-2">
-                              <button
-                                onClick={() => setExpandedImage(sub.image_url)}
-                                className="block rounded-lg overflow-hidden border transition-transform hover:scale-105"
-                                style={{
-                                  borderColor: "var(--border)",
-                                  width: 80,
-                                  height: 56,
-                                }}
-                              >
-                                <img
-                                  src={sub.image_url}
-                                  alt="Submission"
-                                  className="w-full h-full object-cover"
-                                />
-                              </button>
-                              <a
-                                href={sub.image_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-xs no-underline"
-                                style={{ color: "var(--accent-light)" }}
-                              >
-                                <ExternalLink size={10} />
-                                Open
-                              </a>
-                            </div>
+                            <button
+                              onClick={() => setExpandedImage(sub.image_url)}
+                              className="block h-10 w-16 bg-gray-100 border border-[var(--border)] rounded overflow-hidden"
+                            >
+                              <img src={sub.image_url} alt="Submission" className="w-full h-full object-cover opacity-90 hover:opacity-100" />
+                            </button>
                           ) : (
-                            <span className="text-xs" style={{ color: "var(--muted)" }}>
-                              —
-                            </span>
+                            <span className="text-sm text-[var(--muted)]">—</span>
                           )}
                         </td>
-                        <td>
-                          <code
-                            className="text-xs px-2 py-1 rounded"
-                            style={{
-                              background: "var(--input-bg)",
-                              color: "var(--muted)",
-                              fontSize: "0.65rem",
-                            }}
-                          >
-                            {sub.id.slice(0, 8)}…
-                          </code>
+                        <td className="py-3 px-4 text-xs text-[var(--muted)] font-mono">
+                          {sub.id.split('-')[0]}
                         </td>
                       </tr>
                     ))}
@@ -265,15 +185,13 @@ export default function AdminRawPage() {
       {/* Image Lightbox */}
       {expandedImage && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-8"
-          style={{ background: "rgba(0,0,0,0.85)" }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm"
           onClick={() => setExpandedImage(null)}
         >
           <img
             src={expandedImage}
             alt="Full size"
-            className="max-w-full max-h-full rounded-xl shadow-2xl"
-            style={{ border: "1px solid var(--border)" }}
+            className="max-w-full max-h-full rounded border border-white/20 shadow-2xl"
           />
         </div>
       )}

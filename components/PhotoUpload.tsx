@@ -57,32 +57,23 @@ export default function PhotoUpload({
 
   if (hasFile && previewUrl) {
     return (
-      <div
-        className="relative rounded-xl overflow-hidden"
-        style={{
-          border: "1px solid var(--input-border)",
-          background: "var(--input-bg)",
-        }}
-      >
+      <div className="relative rounded overflow-hidden border border-[var(--border)] bg-[var(--background)]">
         <img
           src={previewUrl}
           alt="Upload preview"
           className="w-full h-48 object-cover"
         />
-        <div className="flex items-center justify-between p-3">
+        <div className="flex items-center justify-between p-3 border-t border-[var(--border)]">
           <div className="flex items-center gap-2 min-w-0">
-            <ImageIcon size={14} style={{ color: "var(--muted)" }} />
-            <span
-              className="text-xs truncate"
-              style={{ color: "var(--muted)" }}
-            >
+            <ImageIcon size={14} className="text-[var(--muted)]" />
+            <span className="text-xs truncate text-[var(--muted)]">
               {fileName}
             </span>
           </div>
           <button
             type="button"
             onClick={handleClear}
-            className="btn-danger px-2 py-1"
+            className="p-1 text-[var(--muted)] hover:text-red-600 transition-colors"
             aria-label="Remove image"
           >
             <X size={14} />
@@ -94,7 +85,11 @@ export default function PhotoUpload({
 
   return (
     <div
-      className={`drop-zone ${isDragging ? "active" : ""}`}
+      className={`border border-dashed rounded p-8 text-center cursor-pointer transition-colors ${
+        isDragging
+          ? "border-[var(--foreground)] bg-[var(--card)]"
+          : "border-[var(--border)] hover:border-[var(--muted)] hover:bg-[var(--card-hover)]"
+      }`}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -113,16 +108,11 @@ export default function PhotoUpload({
           if (file) handleFile(file);
         }}
       />
-      <Upload
-        size={32}
-        className="mx-auto mb-3"
-        style={{ color: "var(--muted)" }}
-      />
-      <p className="text-sm font-medium mb-1">
-        Drop an image here or{" "}
-        <span className="text-accent-light">click to browse</span>
+      <Upload size={24} className="mx-auto mb-3 text-[var(--muted)]" />
+      <p className="text-sm font-medium mb-1 text-[var(--foreground)]">
+        Drop an image here or click to browse
       </p>
-      <p className="text-xs" style={{ color: "var(--muted)" }}>
+      <p className="text-xs text-[var(--muted)]">
         JPEG, PNG, WebP — up to 10 MB
       </p>
     </div>

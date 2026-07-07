@@ -11,6 +11,7 @@ export interface Submission {
   audio_url: string | null;
   image_url: string | null;
   ward: string;
+  status: "new" | "reviewed" | "actioned";
   created_at: string;
 }
 
