@@ -43,6 +43,7 @@ export default function HomePage() {
 
         <div className="mt-12 text-xs text-[var(--muted)] border-t border-[var(--border)] pt-4">
           Built for Indian constituencies. Follows GIGW accessibility standards.
+          {/* Trigger Vercel Build */}
         </div>
       </div>
     </div>
