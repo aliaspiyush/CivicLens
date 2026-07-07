@@ -1,0 +1,74 @@
+[
+  {
+    "ward": "Ward 4 — Downtown",
+    "proposed_work": "Construction of new primary school building (6 classrooms) with playground and boundary wall",
+    "category": "Education",
+    "estimated_budget_lakhs": 85.0,
+    "justification_notes": "Ward 4 schools operating at 180% capacity. Student-teacher ratio 58:1 (state avg 30:1). Nearest alternative school 12.3 km away. Multiple parent complaints on record.",
+    "status": "proposed",
+    "plan_source": "Municipal Annual Development Plan 2025-26"
+  },
+  {
+    "ward": "Ward 9 — Green Valley",
+    "proposed_work": "Construction of additional school wing (4 classrooms) in existing Green Valley Public School",
+    "category": "Education",
+    "estimated_budget_lakhs": 55.0,
+    "justification_notes": "Anticipating population growth in new residential zone. Current school at 42% capacity but developer projections suggest demand in 3-5 years.",
+    "status": "proposed",
+    "plan_source": "Municipal Annual Development Plan 2025-26"
+  },
+  {
+    "ward": "Ward 4 — Downtown",
+    "proposed_work": "Resurfacing and widening of Main Street (2.4 km stretch from Town Hall to Bus Stand)",
+    "category": "Roads",
+    "estimated_budget_lakhs": 120.0,
+    "justification_notes": "Road condition index 0.28 (critical). 14.5 potholes/km. Handles 18,500 vehicles/day — well above design capacity of 8,000.",
+    "status": "approved",
+    "plan_source": "State PWD Road Improvement Scheme 2025"
+  },
+  {
+    "ward": "Ward 7 — Ambedkar Nagar",
+    "proposed_work": "Installation of new 500 KLD water treatment plant and 8 km pipeline network",
+    "category": "Water & Sanitation",
+    "estimated_budget_lakhs": 340.0,
+    "justification_notes": "Only 38% households have water connections. Average supply 2.5 hours/day vs state target of 12 hours. 4.8 km of open drains.",
+    "status": "proposed",
+    "plan_source": "Jal Jeevan Mission — District Implementation Plan 2025"
+  },
+  {
+    "ward": "Ward 10 — Riverside",
+    "proposed_work": "Installation of 2x 250 KVA transformers and replacement of 3.2 km feeder line",
+    "category": "Electricity",
+    "estimated_budget_lakhs": 45.0,
+    "justification_notes": "Existing transformers at 142% load. Average 6.2 hours daily outage. 55% of streetlights non-functional.",
+    "status": "in_progress",
+    "plan_source": "State Electricity Board — Distribution Improvement Plan 2025"
+  },
+  {
+    "ward": "Ward 7 — Ambedkar Nagar",
+    "proposed_work": "Upgradation of Primary Health Centre to Community Health Centre (30-bed facility)",
+    "category": "Public Health",
+    "estimated_budget_lakhs": 280.0,
+    "justification_notes": "Only 0.3 beds per 1000 population (national norm: 2.0). Nearest hospital 8.7 km away. High infant mortality rate in ward.",
+    "status": "proposed",
+    "plan_source": "National Health Mission — District Health Action Plan 2025-26"
+  },
+  {
+    "ward": "Ward 8 — Sadar Bazaar",
+    "proposed_work": "Door-to-door waste collection system with 3 compactor vehicles and micro-composting centre",
+    "category": "Waste Management",
+    "estimated_budget_lakhs": 65.0,
+    "justification_notes": "Only 52% waste collection coverage. 7 open dump sites in residential areas. Tourist heritage zone with sanitation complaints.",
+    "status": "proposed",
+    "plan_source": "Swachh Bharat Mission — Urban Local Body Action Plan 2025"
+  },
+  {
+    "ward": "Ward 9 — Green Valley",
+    "proposed_work": "Construction of 2 km storm water drain along Green Valley Main Road",
+    "category": "Water & Sanitation",
+    "estimated_budget_lakhs": 95.0,
+    "justification_notes": "New residential zone prone to waterlogging during monsoon. No existing storm water infrastructure.",
+    "status": "approved",
+    "plan_source": "Municipal Annual Development Plan 2025-26"
+  }
+]
