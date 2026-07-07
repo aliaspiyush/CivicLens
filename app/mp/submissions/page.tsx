@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { getSupabase } from "@/lib/supabase";
 import type { Submission } from "@/types";
 import { ChevronRight, ChevronDown, Play, FileText, ImageIcon, CheckCircle, Clock } from "lucide-react";
@@ -161,7 +161,7 @@ export default function MPSubmissionsPage() {
               </tr>
             ) : (
               filteredSubmissions.map((sub) => (
-                <React.Fragment key={sub.id}>
+                <Fragment key={sub.id}>
                   <tr
                     className="border-b border-[var(--border)] hover:bg-[var(--card)] cursor-pointer transition-colors"
                     onClick={() => toggleRow(sub.id)}
@@ -247,7 +247,7 @@ export default function MPSubmissionsPage() {
                       </td>
                     </tr>
                   )}
-                </React.Fragment>
+                </Fragment>
               ))
             )}
           </tbody>
