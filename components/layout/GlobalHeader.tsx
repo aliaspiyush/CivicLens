@@ -97,7 +97,10 @@ export default function GlobalHeader() {
         
         <div className="flex items-center gap-1.5 px-2 py-1 rounded border border-[var(--border)] bg-[var(--card)]">
           <Sparkles size={12} className="text-[var(--muted)]" />
-          <span className="text-[10px] font-medium text-[var(--muted)] uppercase tracking-wider">
+          <span 
+            className="text-[10px] font-medium text-[var(--muted)] uppercase tracking-wider"
+            style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+          >
             Powered by Gemini 2.5
           </span>
         </div>

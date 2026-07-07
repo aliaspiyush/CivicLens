@@ -85,11 +85,14 @@ export default function PhotoUpload({
 
   return (
     <div
-      className={`border border-dashed rounded p-8 text-center cursor-pointer transition-colors ${
+      className={`border border-dashed rounded p-8 text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--muted)] ${
         isDragging
           ? "border-[var(--foreground)] bg-[var(--card)]"
           : "border-[var(--border)] hover:border-[var(--muted)] hover:bg-[var(--card-hover)]"
       }`}
+      tabIndex={0}
+      role="button"
+      aria-label="Upload photo evidence"
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -97,6 +100,12 @@ export default function PhotoUpload({
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          inputRef.current?.click();
+        }
+      }}
     >
       <input
         ref={inputRef}

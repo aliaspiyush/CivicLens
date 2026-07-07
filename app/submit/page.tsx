@@ -149,7 +149,11 @@ export default function SubmitPage() {
           <ArrowLeft size={16} />
           Back
         </Link>
-        <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted)] border border-[var(--border)] px-2 py-1 rounded">
+        <div 
+          className="flex items-center gap-2 text-xs font-medium text-[var(--muted)] border border-[var(--border)] px-2 py-1 rounded"
+          aria-label="Language selector: English, Hindi, Bengali"
+          role="status"
+        >
           <Globe2 size={14} />
           <span>EN | HI | BN</span>
         </div>

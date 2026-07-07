@@ -10,6 +10,17 @@ const justificationResponseSchema = z.object({
   data_alignment: z.enum(["strongly_supports", "partially_supports", "contradicts", "insufficient_data"]),
 });
 
+// --- Zod validation schema for Gemini extraction response ---
+const extractionResponseSchema = z.object({
+  language: z.string(),
+  english_translation: z.string(),
+  summary: z.string().max(150),
+  category: z.string(),
+  priority_score: z.number().int().min(1).max(5),
+  urgency_reasoning: z.string(),
+  detected_sentiment: z.string(),
+});
+
 // --- Gemini client singleton ---
 let _genAI: GoogleGenerativeAI | null = null;
 
@@ -235,6 +246,60 @@ export async function generateJustification(params: {
       throw new Error("Gemini API call timed out after 60 seconds.");
     }
 
+    throw error;
+  }
+}
+
+// --- Structured output schema for Extraction ---
+const extractionJsonSchema: Schema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    language: { type: SchemaType.STRING, description: "Language of the original submission (e.g., Hindi, Bengali, English)." },
+    english_translation: { type: SchemaType.STRING, description: "English translation of the submission." },
+    summary: { type: SchemaType.STRING, description: "One sentence summary of the core issue." },
+    category: { type: SchemaType.STRING, description: "Category of the issue (e.g., Water & Sanitation, Education, Roads, Waste Management)." },
+    priority_score: { type: SchemaType.INTEGER, description: "Urgency score from 1 (low) to 5 (high) based on the text." },
+    urgency_reasoning: { type: SchemaType.STRING, description: "Why this priority score was given." },
+    detected_sentiment: { type: SchemaType.STRING, description: "Sentiment (e.g., Angry, Desperate, Neutral)." },
+  },
+  required: ["language", "english_translation", "summary", "category", "priority_score", "urgency_reasoning", "detected_sentiment"],
+};
+
+export async function extractSubmissionData(rawText: string) {
+  const genAI = getGenAI();
+
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-pro-preview-05-06",
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: extractionJsonSchema,
+      temperature: 0.1,
+    },
+  });
+
+  const prompt = `You are a civic data extractor. Analyze the following citizen submission. 
+Extract the language, translate it to English, summarize it, categorize it, and score the urgency (1-5).
+ZERO HALLUCINATION SAFEGUARD: Use only the supplied input data. Do not invent statistics, names, distances, counts, budgets, or facts. If the evidence is insufficient, say 'Insufficient data to determine this.'
+
+Submission text:
+"${rawText}"`;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
+
+  try {
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    });
+    clearTimeout(timeout);
+
+    const text = result.response.text();
+    if (!text) throw new Error("Empty response");
+
+    const parsed = JSON.parse(text);
+    return extractionResponseSchema.parse(parsed);
+  } catch (error) {
+    clearTimeout(timeout);
     throw error;
   }
 }

@@ -24,7 +24,12 @@ export default function HomePage() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles size={20} className="text-[var(--foreground)]" />
-              <h3 className="text-lg font-semibold">Powered by Gemini 2.5</h3>
+              <h3 
+                className="text-lg font-semibold"
+                style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+              >
+                Powered by Gemini 2.5
+              </h3>
             </div>
             <p className="text-sm text-[var(--secondary)] leading-relaxed">
               Gemini 2.5 synthesizes multilingual citizen submissions, structured public reference data, and existing local development plans. It uses advanced reasoning to surface citizen requests that are genuinely backed by statistical need, flagging competing plans and objectively ranking civic priorities.
