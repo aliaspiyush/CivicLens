@@ -112,10 +112,11 @@ ${formatReferenceData(params.referenceData)}
 ${formatDevelopmentPlans(params.developmentPlans)}
 
 ## Instructions
-1. Compare the citizen demand signal (volume, urgency, and described conditions) against the reference data metrics. Does the data support the urgency citizens describe? For example, if citizens say schools are overcrowded, does the enrollment-to-capacity ratio confirm this?
-2. Check if any existing development plan already addresses this theme. If so, is the plan sufficient, or does the citizen demand suggest a gap the plan doesn't cover?
-3. If a competing plan exists that is more justified by the data than the citizen request, note it.
-4. Assign a justification_score from 1 to 10:
+1. ZERO HALLUCINATION SAFEGUARD: You must only use information present in the provided submissions and reference data. Do not infer, assume, or fabricate any statistic, number, or fact not explicitly present in the input. If data is insufficient to support a claim, state 'Insufficient data to determine this' instead of guessing. Every numeric claim in your output must be traceable to a specific field in the input data provided.
+2. Compare the citizen demand signal (volume, urgency, and described conditions) against the reference data metrics. Does the data support the urgency citizens describe? For example, if citizens say schools are overcrowded, does the enrollment-to-capacity ratio confirm this?
+3. Check if any existing development plan already addresses this theme. If so, is the plan sufficient, or does the citizen demand suggest a gap the plan doesn't cover?
+4. If a competing plan exists that is more justified by the data than the citizen request, note it.
+5. Assign a justification_score from 1 to 10:
    - 1-3: Citizen demand is NOT supported by evidence. Data suggests the issue is already addressed or does not exist at the claimed severity.
    - 4-5: Demand is partially supported. Some evidence exists but the urgency is overstated, or a plan already covers it.
    - 6-7: Demand is supported by evidence. Data confirms the issue exists and is not fully addressed.
@@ -177,7 +178,51 @@ export async function generateJustification(params: {
     // Validate with Zod
     const validated = justificationResponseSchema.parse(parsed);
 
-    return validated;
+    // --- ZERO HALLUCINATION SAFEGUARD ---
+    // Extract all numbers from rationale
+    const numberRegex = /\b\d+(\.\d+)?\b/g;
+    const numbersInRationale = validated.rationale_text.match(numberRegex) || [];
+    
+    // Create a corpus of all input strings to check against
+    const inputCorpus = [
+      params.submissionCount.toString(),
+      params.avgUrgency.toFixed(1),
+      ...params.referenceData.map(r => r.metric_value.toString()),
+      ...params.developmentPlans.map(p => p.estimated_budget_lakhs?.toString() || ""),
+      ...params.developmentPlans.map(p => p.justification_notes)
+    ].join(" ");
+
+    // Check if every number generated exists in the input corpus
+    let validationPassed = true;
+    for (const num of numbersInRationale) {
+      if (!inputCorpus.includes(num)) {
+        validationPassed = false;
+        break;
+      }
+    }
+
+    // Attempt to log to gemini_audit_log
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.startsWith('http') 
+        ? process.env.NEXT_PUBLIC_SUPABASE_URL 
+        : 'http://localhost:54321';
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy';
+      
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      await supabase.from('gemini_audit_log').insert({
+        prompt,
+        response: text,
+        validation_passed: validationPassed
+      });
+    } catch (logError) {
+      console.error("Failed to write to gemini_audit_log:", logError);
+    }
+
+    return {
+      ...validated,
+      validation_passed: validationPassed
+    };
   } catch (error) {
     clearTimeout(timeout);
 

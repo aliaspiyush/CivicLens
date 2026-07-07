@@ -154,7 +154,7 @@ export default function AdminRawPage() {
                           {sub.audio_url ? (
                             <audio controls preload="none" src={sub.audio_url} className="h-8 w-40 grayscale opacity-80" />
                           ) : (
-                            <span className="text-sm text-[var(--muted)]">—</span>
+                            <span className="text-sm text-[var(--muted)]">-</span>
                           )}
                         </td>
                         <td className="py-3 px-4">
@@ -166,7 +166,7 @@ export default function AdminRawPage() {
                               <img src={sub.image_url} alt="Submission" className="w-full h-full object-cover opacity-90 hover:opacity-100" />
                             </button>
                           ) : (
-                            <span className="text-sm text-[var(--muted)]">—</span>
+                            <span className="text-sm text-[var(--muted)]">-</span>
                           )}
                         </td>
                         <td className="py-3 px-4 text-xs text-[var(--muted)] font-mono">

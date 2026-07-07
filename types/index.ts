@@ -108,6 +108,7 @@ export interface GeminiJustificationResult {
   rationale_text: string;
   competing_plan_summary: string;
   data_alignment: "strongly_supports" | "partially_supports" | "contradicts" | "insufficient_data";
+  validation_passed?: boolean;
 }
 
 export interface CompositeScore {

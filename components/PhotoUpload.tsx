@@ -113,7 +113,7 @@ export default function PhotoUpload({
         Drop an image here or click to browse
       </p>
       <p className="text-xs text-[var(--muted)]">
-        JPEG, PNG, WebP — up to 10 MB
+        JPEG, PNG, WebP - up to 10 MB
       </p>
     </div>
   );

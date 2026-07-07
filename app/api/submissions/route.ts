@@ -13,7 +13,7 @@ function getSupabaseServer() {
   return createClient(url, key);
 }
 
-// POST — Create a new submission
+// POST - Create a new submission
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET — List all submissions, newest first
+// GET - List all submissions, newest first
 export async function GET() {
   try {
     const supabase = getSupabaseServer();

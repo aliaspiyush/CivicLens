@@ -117,7 +117,7 @@ export default function SubmitPage() {
         );
       }
 
-      // Success — reset form
+      // Success - reset form
       setRawText("");
       setSelectedWard("");
       setAudioBlob(null);
