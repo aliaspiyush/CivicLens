@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ward-01",
+    "name": "Ward 1 — Rajpur",
+    "zone": "North Zone",
+    "description": "Covers Rajpur main road, Gandhi Chowk, and surrounding residential areas."
+  },
+  {
+    "id": "ward-02",
+    "name": "Ward 2 — Laxmi Nagar",
+    "zone": "North Zone",
+    "description": "Includes Laxmi Nagar market, the government hospital, and bus stand area."
+  },
+  {
+    "id": "ward-03",
+    "name": "Ward 3 — Shivaji Nagar",
+    "zone": "East Zone",
+    "description": "Covers Shivaji Nagar colony, primary school, and Hanuman Temple road."
+  },
+  {
+    "id": "ward-04",
+    "name": "Ward 4 — Downtown",
+    "zone": "Central Zone",
+    "description": "Central business district, town hall, and main post office."
+  },
+  {
+    "id": "ward-05",
+    "name": "Ward 5 — Nehru Colony",
+    "zone": "Central Zone",
+    "description": "Residential area with Nehru Park, community centre, and PHC."
+  },
+  {
+    "id": "ward-06",
+    "name": "Ward 6 — Industrial Area",
+    "zone": "West Zone",
+    "description": "Covers MIDC industrial estate, workers' quarters, and freight corridor."
+  },
+  {
+    "id": "ward-07",
+    "name": "Ward 7 — Ambedkar Nagar",
+    "zone": "South Zone",
+    "description": "Includes Ambedkar Nagar, Dalit Basti, and the new water treatment plant."
+  },
+  {
+    "id": "ward-08",
+    "name": "Ward 8 — Sadar Bazaar",
+    "zone": "Central Zone",
+    "description": "Historic market area, railway station surroundings, and old town."
+  },
+  {
+    "id": "ward-09",
+    "name": "Ward 9 — Green Valley",
+    "zone": "South Zone",
+    "description": "Newly developed residential zone with parks, schools, and IT park."
+  },
+  {
+    "id": "ward-10",
+    "name": "Ward 10 — Riverside",
+    "zone": "East Zone",
+    "description": "Settlements along the river, flood-prone areas, and fishing communities."
+  },
+  {
+    "id": "ward-11",
+    "name": "Ward 11 — University Area",
+    "zone": "North Zone",
+    "description": "University campus, student hostels, and faculty housing."
+  },
+  {
+    "id": "ward-12",
+    "name": "Ward 12 — Cantonment",
+    "zone": "West Zone",
+    "description": "Military cantonment, defence colony, and veterans' hospital."
+  }
+]
