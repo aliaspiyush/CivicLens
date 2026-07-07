@@ -1,117 +1,88 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Lock, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
-  
+  const [error, setError] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
+    setError(false);
 
-    if (isSignUp) {
-      const { error, data } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        setMessage({ text: error.message, type: "error" });
-      } else if (data?.user?.identities?.length === 0) {
-        setMessage({ text: "This email is already registered. Please sign in.", type: "error" });
-      } else {
-        setMessage({ text: "Success! Please check your email to confirm your account (if email confirmations are enabled in Supabase). If disabled, you can log in directly.", type: "success" });
-      }
+    // Simple hardcoded check for demonstration purposes
+    if (password === "Dashboard@123") {
+      // Set a simple cookie for middleware to pick up
+      document.cookie = "demo_access=true; path=/; max-age=86400"; // 1 day expiry
+      router.push("/mp/submissions");
+      router.refresh(); // Force middleware re-evaluation
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setMessage({ text: error.message, type: "error" });
-      } else {
-        router.push("/mp/submissions");
-        router.refresh();
-      }
+      setLoading(false);
+      setError(true);
+      setPassword("");
     }
-    
-    setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-[var(--background)]">
-      <div className="w-full max-w-sm border border-[var(--border)] bg-[var(--card)] p-8 rounded flex flex-col gap-6">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold mb-2 text-[var(--foreground)]">MP Dashboard Access</h1>
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] p-4 relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute top-0 w-full h-1 border-t border-[var(--foreground)] opacity-10" />
+      
+      <div className="w-full max-w-md animate-fade-in-up">
+        <div className="flex justify-center mb-8">
+          <div className="w-12 h-12 rounded border border-[var(--border)] bg-[var(--card)] flex items-center justify-center">
+            <ShieldCheck size={24} className="text-[var(--foreground)]" />
+          </div>
+        </div>
+
+        <div className="text-center mb-10">
+          <h1 className="text-2xl font-semibold mb-2 text-[var(--foreground)] tracking-tight">
+            MP Dashboard Access
+          </h1>
           <p className="text-[var(--muted)] text-sm">
-            Official portal for Members of Parliament and authorized staff.
+            Enter the secure access phrase to view citizen submissions.
           </p>
         </div>
 
-        {message && (
-          <div className={`p-3 text-sm rounded border ${
-            message.type === "error" ? "bg-red-50 text-red-600 border-red-200" : "bg-green-50 text-green-700 border-green-200"
-          }`}>
-            {message.text}
+        <form onSubmit={handleLogin} className="bg-[var(--card)] border border-[var(--border)] p-1 rounded-lg flex items-center shadow-sm relative transition-all focus-within:border-[var(--muted)] focus-within:ring-4 focus-within:ring-gray-100">
+          <div className="pl-4 pr-3 text-[var(--muted)]">
+            <Lock size={18} />
           </div>
-        )}
-
-        <form onSubmit={handleAuth} className="flex flex-col gap-4">
-          <div>
-            <label className="block text-xs font-medium text-[var(--foreground)] mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full p-2.5 rounded text-sm bg-[var(--background)] border border-[var(--border)] focus:border-[var(--muted)] focus:outline-none"
-              placeholder="mp@gov.in"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-[var(--foreground)] mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full p-2.5 rounded text-sm bg-[var(--background)] border border-[var(--border)] focus:border-[var(--muted)] focus:outline-none"
-              placeholder="••••••••"
-            />
-          </div>
+          
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError(false);
+            }}
+            placeholder="Access Phrase"
+            className="flex-1 py-3 px-1 bg-transparent border-none focus:outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
+            autoFocus
+          />
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full mt-2 py-2.5 px-4 bg-[var(--foreground)] text-[var(--background)] rounded font-medium hover:opacity-90 disabled:opacity-50 transition-opacity text-sm"
+            disabled={loading || !password}
+            className="m-1 flex items-center justify-center w-10 h-10 rounded bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 disabled:opacity-30 transition-all group"
           >
-            {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
           </button>
         </form>
 
-        <div className="text-center text-xs text-[var(--muted)]">
-          {isSignUp ? "Already have an account? " : "Don't have an account? "}
-          <button 
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-[var(--foreground)] hover:underline font-medium"
-          >
-            {isSignUp ? "Sign In" : "Sign Up"}
-          </button>
+        {error && (
+          <p className="text-red-600 text-sm text-center mt-4 animate-shake">
+            Incorrect access phrase. Hint: Dashboard@123
+          </p>
+        )}
+
+        <div className="mt-12 text-center text-xs text-[var(--muted)] border-t border-[var(--border)] pt-6 mx-8">
+          Authorized personnel only. Sessions are monitored and logged.
         </div>
       </div>
     </div>
