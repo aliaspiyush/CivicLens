@@ -1,68 +1,150 @@
 import Link from "next/link";
-import { ArrowRight, Lock, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  ClipboardList,
+  FileText,
+  Landmark,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-full px-6 py-16 bg-[var(--background)] text-[var(--foreground)] w-full">
-      <div className="w-full max-w-4xl flex flex-col gap-16">
-        
-        {/* Hero Section */}
-        <section className="text-center md:text-left flex flex-col gap-4">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[var(--foreground)]">
+    <div className="w-full bg-[var(--background)] text-[var(--foreground)]">
+      <section className="app-container grid gap-10 py-12 md:grid-cols-[1.1fr_0.9fr] md:items-center md:py-16">
+        <div className="max-w-3xl">
+          <p className="section-eyebrow mb-4">Civic governance for India</p>
+          <h1 className="text-4xl font-semibold tracking-tight text-[var(--foreground)] md:text-6xl">
             CivicLens
           </h1>
-          <h2 className="text-xl md:text-2xl text-[var(--secondary)] font-medium">
-            AI powered constituency development planning for India
-          </h2>
-          <p className="text-base text-[var(--muted)] max-w-2xl leading-relaxed mt-2">
-            CivicLens combines unstructured citizen voices with real municipal demand data (like enrollment figures and infrastructure gaps) to give Members of Parliament an objective, evidence backed roadmap for development.
+          <p className="mt-4 text-xl font-medium leading-snug text-[var(--secondary)] md:text-2xl">
+            AI-assisted constituency development planning from citizen voice to
+            evidence-backed priorities.
           </p>
-        </section>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--muted-strong)]">
+            CivicLens helps citizens submit local development concerns and helps
+            MPs and staff review, synthesize, and prioritize needs using public
+            reference data and human oversight.
+          </p>
 
-        {/* Gemini Explainer Block */}
-        <section className="relative overflow-hidden border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-blue-50/30 rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
-          {/* Subtle glow effect behind */}
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={20} className="text-[var(--foreground)]" />
-              <h3 
-                className="text-lg font-semibold"
-                style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
-              >
-                Powered by Gemini 2.5
-              </h3>
-            </div>
-            <p className="text-sm text-[var(--secondary)] leading-relaxed">
-              Gemini 2.5 synthesizes multilingual citizen submissions, structured public reference data, and existing local development plans. It uses advanced reasoning to surface citizen requests that are genuinely backed by statistical need, flagging competing plans and objectively ranking civic priorities.
-            </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/submit" className="btn-primary px-5">
+              <FileText size={17} aria-hidden="true" />
+              Submit a concern
+            </Link>
+            <Link href="/login" className="btn-secondary px-5">
+              <Landmark size={17} aria-hidden="true" />
+              Open MP portal
+            </Link>
           </div>
-        </section>
+        </div>
 
-        {/* Existing Navigation Cards */}
-        <section>
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <Link href="/submit" className="group block p-8 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-            <h2 className="text-2xl font-semibold mb-3 flex items-center gap-2 text-[var(--foreground)]">
-              Citizen Portal <ArrowRight size={20} className="text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" />
+        <div className="panel p-5 md:p-6" aria-label="CivicLens workflow">
+          <div className="mb-5 flex items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
+            <div>
+              <p className="section-eyebrow">Decision flow</p>
+              <h2 className="mt-1 text-lg font-semibold">
+                From submission to review
+              </h2>
+            </div>
+            <ShieldCheck
+              className="text-[var(--accent-action)]"
+              size={24}
+              aria-hidden="true"
+            />
+          </div>
+          <div className="space-y-3">
+            {[
+              "Citizen submits a local issue in text, voice, or photo",
+              "Ward and constituency context is preserved",
+              "Gemini 2.5 synthesizes multilingual input with reference data",
+              "MP staff review ranked themes and source evidence",
+            ].map((item, index) => (
+              <div
+                key={item}
+                className="grid grid-cols-[2rem_1fr] items-start gap-3 rounded border border-[var(--border)] bg-[var(--card-hover)] p-3"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded border border-[var(--border)] bg-[var(--card)] text-sm font-semibold text-[var(--muted-strong)]">
+                  {index + 1}
+                </span>
+                <p className="text-sm leading-6 text-[var(--secondary)]">
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-[var(--border)] bg-[var(--card)]">
+        <div className="app-container grid gap-8 py-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div>
+            <div className="status-pill w-fit">
+              <Sparkles size={12} aria-hidden="true" />
+              Powered by Gemini 2.5
+            </div>
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight">
+              Multilingual synthesis with source-aware review
             </h2>
-            <p className="text-[var(--secondary)] leading-relaxed">
-              Submit your local concerns, track infrastructure gaps, and ensure your voice is heard by your representative. Multilingual support enabled.
-            </p>
+          </div>
+          <p className="text-sm leading-7 text-[var(--secondary)] md:text-base">
+            Gemini 2.5 assists by synthesizing multilingual citizen submissions,
+            structured public reference datasets, and local development plans.
+            The product separates source data from AI-generated rationale so
+            staff can inspect the evidence before acting.
+          </p>
+        </div>
+      </section>
+
+      <section className="app-container py-10 md:py-12">
+        <div className="grid gap-5 md:grid-cols-2">
+          <Link
+            href="/submit"
+            className="panel group block p-6 transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+          >
+            <div className="mb-5 flex h-10 w-10 items-center justify-center rounded border border-[var(--border)] bg-[var(--card)]">
+              <ClipboardList size={20} aria-hidden="true" />
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">Citizen submission</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--secondary)]">
+                  Report a local development concern with ward context, optional
+                  voice recording, and photo evidence.
+                </p>
+              </div>
+              <ArrowRight
+                size={18}
+                className="mt-1 text-[var(--muted)] transition-colors group-hover:text-[var(--foreground)]"
+                aria-hidden="true"
+              />
+            </div>
           </Link>
 
-          <Link href="/login" className="group block p-8 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--card-hover)] hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-            <h2 className="text-2xl font-semibold mb-3 flex items-center gap-2 text-[var(--foreground)]">
-              MP Dashboard <ArrowRight size={20} className="text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" />
-            </h2>
-            <p className="text-[var(--secondary)] leading-relaxed">
-              Access AI-synthesized priority themes. Review evidence-backed citizen demands mapped directly against municipal data and budgets.
-            </p>
+          <Link
+            href="/login"
+            className="panel group block p-6 transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+          >
+            <div className="mb-5 flex h-10 w-10 items-center justify-center rounded border border-[var(--border)] bg-[var(--card)]">
+              <Landmark size={20} aria-hidden="true" />
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">MP portal</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--secondary)]">
+                  Review submissions, inspect AI-generated themes, and compare
+                  rationale against source evidence.
+                </p>
+              </div>
+              <ArrowRight
+                size={18}
+                className="mt-1 text-[var(--muted)] transition-colors group-hover:text-[var(--foreground)]"
+                aria-hidden="true"
+              />
+            </div>
           </Link>
         </div>
-        </section>
-
-      </div>
+      </section>
     </div>
   );
 }

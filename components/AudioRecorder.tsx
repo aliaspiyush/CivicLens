@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Mic, Square, Trash2, Play, Pause } from "lucide-react";
+import { Mic, Pause, Play, Square, Trash2 } from "lucide-react";
 
 interface AudioRecorderProps {
   onRecordingComplete: (blob: Blob) => void;
@@ -102,78 +102,83 @@ export default function AudioRecorder({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  return (
-    <div className="flex flex-col items-center gap-4">
-      {!hasRecording ? (
-        <>
-          <button
-            type="button"
-            onClick={isRecording ? stopRecording : startRecording}
-            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
-              isRecording
-                ? "bg-red-50 text-red-600 border border-red-200"
-                : "bg-[var(--card)] hover:bg-[var(--card-hover)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-            }`}
-            aria-label={isRecording ? "Stop recording" : "Start recording"}
-          >
-            {isRecording ? (
-              <Square size={24} fill="currentColor" />
-            ) : (
-              <Mic size={24} />
-            )}
-          </button>
-          <p className="text-sm text-[var(--muted)]">
-            {isRecording ? (
-              <span className="flex items-center gap-2 text-red-600 font-medium">
-                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-                Recording... {formatTime(duration)}
-              </span>
-            ) : (
-              "Tap to start recording"
-            )}
-          </p>
-        </>
-      ) : (
-        <div className="flex items-center gap-4 w-full p-4 rounded bg-[var(--card)] border border-[var(--border)]">
-          <button
-            type="button"
-            onClick={togglePlayback}
-            className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-white border border-[var(--border)] text-[var(--foreground)] hover:bg-gray-50"
-            aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            {isPlaying ? (
-              <Pause size={16} />
-            ) : (
-              <Play size={16} style={{ marginLeft: 2 }} />
-            )}
-          </button>
-
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-[var(--foreground)] truncate">Voice Recording</p>
-            <p className="text-xs text-[var(--muted)]">
-              Duration: {formatTime(duration)}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={clearRecording}
-            className="p-2 text-[var(--muted)] hover:text-red-600 transition-colors"
-            aria-label="Remove recording"
-          >
-            <Trash2 size={16} />
-          </button>
-
-          {audioUrl && (
-            <audio
-              ref={audioRef}
-              src={audioUrl}
-              onEnded={() => setIsPlaying(false)}
-              preload="metadata"
-            />
+  if (hasRecording) {
+    return (
+      <div className="flex items-center gap-3 rounded border border-[var(--border)] bg-[var(--card-hover)] p-3">
+        <button
+          type="button"
+          onClick={togglePlayback}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] transition-colors hover:bg-[var(--background)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+          aria-label={isPlaying ? "Pause recording" : "Play recording"}
+        >
+          {isPlaying ? (
+            <Pause size={16} aria-hidden="true" />
+          ) : (
+            <Play size={16} className="ml-0.5" aria-hidden="true" />
           )}
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-[var(--foreground)]">
+            Voice recording attached
+          </p>
+          <p className="text-xs text-[var(--muted)]">
+            Duration {formatTime(duration)}
+          </p>
         </div>
-      )}
+
+        <button
+          type="button"
+          onClick={clearRecording}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded text-[var(--muted-strong)] transition-colors hover:bg-[var(--danger-soft)] hover:text-[var(--danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+          aria-label="Remove recording"
+        >
+          <Trash2 size={16} aria-hidden="true" />
+        </button>
+
+        {audioUrl && (
+          <audio
+            ref={audioRef}
+            src={audioUrl}
+            onEnded={() => setIsPlaying(false)}
+            preload="metadata"
+          />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded border border-[var(--border)] bg-[var(--card-hover)] p-4">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+        <button
+          type="button"
+          onClick={isRecording ? stopRecording : startRecording}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)] ${
+            isRecording
+              ? "border-[var(--danger)] bg-[var(--danger-soft)] text-[var(--danger)]"
+              : "border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--border-strong)] hover:bg-[var(--background)]"
+          }`}
+          aria-label={isRecording ? "Stop recording" : "Start recording"}
+        >
+          {isRecording ? (
+            <Square size={20} fill="currentColor" aria-hidden="true" />
+          ) : (
+            <Mic size={20} aria-hidden="true" />
+          )}
+        </button>
+
+        <div>
+          <p className="text-sm font-semibold text-[var(--foreground)]">
+            {isRecording ? "Recording in progress" : "Record a voice note"}
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
+            {isRecording
+              ? `Tap stop when finished. Duration ${formatTime(duration)}`
+              : "Use this if typing is difficult or the issue is easier to explain aloud."}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

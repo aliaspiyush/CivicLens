@@ -3,16 +3,24 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  AlertCircle,
   ArrowLeft,
-  RefreshCw,
-  FileText,
-  Mic,
   Image as ImageIcon,
-  ExternalLink,
-  Loader2,
   Inbox,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import type { Submission } from "@/types";
+
+async function loadSubmissionData(): Promise<Submission[]> {
+  const res = await fetch("/api/submissions");
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `HTTP ${res.status}`);
+  }
+  const data = await res.json();
+  return data.submissions;
+}
 
 export default function AdminRawPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -20,17 +28,42 @@ export default function AdminRawPage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadInitialData = async () => {
+      try {
+        const nextSubmissions = await loadSubmissionData();
+        if (!cancelled) {
+          setSubmissions(nextSubmissions);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        if (!cancelled) {
+          setError(
+            err instanceof Error ? err.message : "Failed to load submissions"
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadInitialData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const fetchSubmissions = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/submissions");
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      setSubmissions(data.submissions);
+      const nextSubmissions = await loadSubmissionData();
+      setSubmissions(nextSubmissions);
     } catch (err) {
       console.error("Fetch error:", err);
       setError(err instanceof Error ? err.message : "Failed to load submissions");
@@ -38,10 +71,6 @@ export default function AdminRawPage() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchSubmissions();
-  }, []);
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -52,146 +81,156 @@ export default function AdminRawPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--background)]">
-      {/* Header */}
-      <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between border-b border-[var(--border)] bg-[var(--background)]">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back to Home
-        </Link>
-        <h1 className="text-sm font-semibold tracking-wide text-[var(--foreground)]">
-          Raw Data Explorer
-        </h1>
-      </header>
-
-      {/* Main */}
-      <main className="flex-1 px-4 md:px-8 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Title bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-xl font-semibold mb-1 text-[var(--foreground)]">Raw Submissions Table</h2>
-              <p className="text-sm text-[var(--muted)]">
-                Unprocessed citizen submissions from all wards. ({submissions.length} total)
-              </p>
-            </div>
-            <button
-              onClick={fetchSubmissions}
-              disabled={isLoading}
-              className="flex items-center gap-2 px-3 py-1.5 border border-[var(--border)] rounded text-sm text-[var(--foreground)] hover:bg-[var(--card-hover)] transition-colors"
-            >
-              {isLoading ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <RefreshCw size={14} />
-              )}
-              Refresh Data
-            </button>
-          </div>
-
-          {/* Error State */}
-          {error && (
-            <div className="p-4 rounded border border-red-200 bg-red-50 text-red-700 mb-6">
-              <p className="text-sm font-medium">Error: {error}</p>
-              <p className="text-xs mt-1 opacity-80">
-                Check that your Supabase credentials are configured and the submissions table exists.
-              </p>
-            </div>
-          )}
-
-          {/* Loading */}
-          {isLoading && (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 size={32} className="animate-spin text-[var(--muted)]" />
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!isLoading && !error && submissions.length === 0 && (
-            <div className="border border-[var(--border)] rounded bg-[var(--card)] p-16 text-center">
-              <Inbox size={32} className="mx-auto mb-4 text-[var(--muted)]" />
-              <h3 className="text-base font-medium mb-1 text-[var(--foreground)]">No submissions found</h3>
-              <p className="text-sm text-[var(--muted)] mb-6">
-                Citizen submissions will appear here once they start coming in.
-              </p>
-              <Link href="/submit" className="text-sm border border-[var(--border)] bg-white px-4 py-2 rounded hover:bg-gray-50 transition-colors">
-                Submit Test Feedback
-              </Link>
-            </div>
-          )}
-
-          {/* Table */}
-          {!isLoading && submissions.length > 0 && (
-            <div className="border border-[var(--border)] rounded bg-[var(--background)] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-[var(--card)] border-b border-[var(--border)]">
-                    <tr>
-                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Date</th>
-                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Ward</th>
-                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Raw Text</th>
-                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Audio</th>
-                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">Image</th>
-                      <th className="py-3 px-4 text-xs font-medium text-[var(--muted)] uppercase tracking-wider">ID</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {submissions.map((sub) => (
-                      <tr key={sub.id} className="border-b border-[var(--border)] hover:bg-[var(--card-hover)] transition-colors">
-                        <td className="py-3 px-4 whitespace-nowrap text-sm text-[var(--secondary)]">
-                          {formatDate(sub.created_at)}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-[var(--foreground)]">
-                          {sub.ward}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-[var(--secondary)] max-w-xs truncate">
-                          {sub.raw_text ? sub.raw_text : <span className="text-[var(--muted)] italic">None</span>}
-                        </td>
-                        <td className="py-3 px-4">
-                          {sub.audio_url ? (
-                            <audio controls preload="none" src={sub.audio_url} className="h-8 w-40 grayscale opacity-80" />
-                          ) : (
-                            <span className="text-sm text-[var(--muted)]">-</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {sub.image_url ? (
-                            <button
-                              onClick={() => setExpandedImage(sub.image_url)}
-                              className="block h-10 w-16 bg-gray-100 border border-[var(--border)] rounded overflow-hidden"
-                            >
-                              <img src={sub.image_url} alt="Submission" className="w-full h-full object-cover opacity-90 hover:opacity-100" />
-                            </button>
-                          ) : (
-                            <span className="text-sm text-[var(--muted)]">-</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-xs text-[var(--muted)] font-mono">
-                          {sub.id.split('-')[0]}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+    <div className="flex-1 bg-[var(--background)]">
+      <main className="app-container py-8">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-[var(--muted-strong)] transition-colors hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+          >
+            <ArrowLeft size={16} aria-hidden="true" />
+            Back to home
+          </Link>
+          <button
+            onClick={fetchSubmissions}
+            disabled={isLoading}
+            className="btn-secondary px-3 disabled:opacity-50"
+          >
+            {isLoading ? (
+              <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+            ) : (
+              <RefreshCw size={14} aria-hidden="true" />
+            )}
+            Refresh data
+          </button>
         </div>
+
+        <div className="mb-6">
+          <p className="section-eyebrow mb-2">Admin data view</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Raw Submissions Table
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted-strong)]">
+            Unprocessed citizen submissions from all wards. {submissions.length}{" "}
+            total records loaded.
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-6 flex items-start gap-3 rounded border border-[var(--danger)] bg-[var(--danger-soft)] p-4 text-[var(--danger)]">
+            <AlertCircle size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-semibold">Error loading submissions</p>
+              <p className="mt-1 text-sm leading-6">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-20 text-[var(--muted)]">
+            <Loader2 size={28} className="animate-spin" aria-hidden="true" />
+          </div>
+        )}
+
+        {!isLoading && !error && submissions.length === 0 && (
+          <div className="panel p-12 text-center">
+            <Inbox size={32} className="mx-auto mb-4 text-[var(--muted)]" />
+            <h2 className="text-base font-semibold">No submissions found</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--muted)]">
+              Citizen submissions will appear here once records are available.
+            </p>
+            <Link href="/submit" className="btn-secondary mt-6 px-4">
+              Submit test feedback
+            </Link>
+          </div>
+        )}
+
+        {!isLoading && submissions.length > 0 && (
+          <div className="table-shell">
+            <div className="overflow-x-auto">
+              <table className="min-w-[880px]">
+                <thead className="bg-[var(--card)]">
+                  <tr>
+                    <th>Date</th>
+                    <th>Ward</th>
+                    <th>Raw text</th>
+                    <th>Audio</th>
+                    <th>Image</th>
+                    <th>ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {submissions.map((sub) => (
+                    <tr key={sub.id} className="transition-colors">
+                      <td className="whitespace-nowrap text-[var(--secondary)]">
+                        {formatDate(sub.created_at)}
+                      </td>
+                      <td className="font-medium text-[var(--foreground)]">
+                        {sub.ward}
+                      </td>
+                      <td className="max-w-xs truncate text-[var(--secondary)]">
+                        {sub.raw_text ? (
+                          sub.raw_text
+                        ) : (
+                          <span className="text-[var(--muted)]">None</span>
+                        )}
+                      </td>
+                      <td>
+                        {sub.audio_url ? (
+                          <audio
+                            controls
+                            preload="none"
+                            src={sub.audio_url}
+                            className="h-8 w-40"
+                          />
+                        ) : (
+                          <span className="text-sm text-[var(--muted)]">None</span>
+                        )}
+                      </td>
+                      <td>
+                        {sub.image_url ? (
+                          <button
+                            onClick={() => setExpandedImage(sub.image_url)}
+                            className="flex h-11 w-16 items-center justify-center overflow-hidden rounded border border-[var(--border)] bg-[var(--card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+                            aria-label="Open submitted image"
+                          >
+                            <img
+                              src={sub.image_url}
+                              alt="Submission evidence"
+                              className="h-full w-full object-cover"
+                            />
+                          </button>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-sm text-[var(--muted)]">
+                            <ImageIcon size={14} aria-hidden="true" />
+                            None
+                          </span>
+                        )}
+                      </td>
+                      <td className="font-mono text-xs text-[var(--muted)]">
+                        {sub.id.split("-")[0]}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </main>
 
-      {/* Image Lightbox */}
       {expandedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6"
           onClick={() => setExpandedImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Submitted image preview"
         >
           <img
             src={expandedImage}
-            alt="Full size"
-            className="max-w-full max-h-full rounded border border-white/20 shadow-2xl"
+            alt="Full size submission evidence"
+            className="max-h-full max-w-full rounded border border-white/20"
           />
         </div>
       )}

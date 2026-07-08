@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, Upload, X } from "lucide-react";
 
 interface PhotoUploadProps {
   onFileSelected: (file: File) => void;
@@ -22,7 +22,7 @@ export default function PhotoUpload({
   const handleFile = useCallback(
     (file: File) => {
       if (!file.type.startsWith("image/")) {
-        alert("Please select an image file (JPEG, PNG, WebP, etc.).");
+        alert("Please select an image file such as JPEG, PNG, or WebP.");
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
@@ -57,26 +57,26 @@ export default function PhotoUpload({
 
   if (hasFile && previewUrl) {
     return (
-      <div className="relative rounded overflow-hidden border border-[var(--border)] bg-[var(--background)]">
+      <div className="overflow-hidden rounded border border-[var(--border)] bg-[var(--card)]">
         <img
           src={previewUrl}
           alt="Upload preview"
-          className="w-full h-48 object-cover"
+          className="h-52 w-full object-cover"
         />
-        <div className="flex items-center justify-between p-3 border-t border-[var(--border)]">
-          <div className="flex items-center gap-2 min-w-0">
-            <ImageIcon size={14} className="text-[var(--muted)]" />
-            <span className="text-xs truncate text-[var(--muted)]">
+        <div className="flex items-center justify-between gap-3 border-t border-[var(--border)] bg-[var(--card-hover)] p-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <ImageIcon size={15} className="text-[var(--muted)]" aria-hidden="true" />
+            <span className="truncate text-sm font-medium text-[var(--secondary)]">
               {fileName}
             </span>
           </div>
           <button
             type="button"
             onClick={handleClear}
-            className="p-1 text-[var(--muted)] hover:text-red-600 transition-colors"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded text-[var(--muted-strong)] transition-colors hover:bg-[var(--danger-soft)] hover:text-[var(--danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
             aria-label="Remove image"
           >
-            <X size={14} />
+            <X size={15} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -85,10 +85,10 @@ export default function PhotoUpload({
 
   return (
     <div
-      className={`border border-dashed rounded p-8 text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--muted)] ${
+      className={`rounded border border-dashed p-5 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent-action)] ${
         isDragging
-          ? "border-[var(--foreground)] bg-[var(--card)]"
-          : "border-[var(--border)] hover:border-[var(--muted)] hover:bg-[var(--card-hover)]"
+          ? "border-[var(--accent-action)] bg-[var(--accent-soft)]"
+          : "border-[var(--border-strong)] bg-[var(--card-hover)] hover:border-[var(--accent-action)]"
       }`}
       tabIndex={0}
       role="button"
@@ -117,13 +117,20 @@ export default function PhotoUpload({
           if (file) handleFile(file);
         }}
       />
-      <Upload size={24} className="mx-auto mb-3 text-[var(--muted)]" />
-      <p className="text-sm font-medium mb-1 text-[var(--foreground)]">
-        Drop an image here or click to browse
-      </p>
-      <p className="text-xs text-[var(--muted)]">
-        JPEG, PNG, WebP - up to 10 MB
-      </p>
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-[var(--border)] bg-[var(--card)]">
+          <Upload size={18} className="text-[var(--muted-strong)]" aria-hidden="true" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-[var(--foreground)]">
+            Upload a photo
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
+            Drop an image here or click to browse. JPEG, PNG, and WebP are
+            supported up to 10 MB.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

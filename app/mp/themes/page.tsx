@@ -1,7 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AlertCircle, ShieldAlert, ChevronDown, ChevronRight, Wand2, Loader2 } from "lucide-react";
+import { useState } from "react";
+import {
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  Database,
+  Loader2,
+  Scale,
+  ShieldAlert,
+  ShieldCheck,
+  Wand2,
+} from "lucide-react";
 
 type ThemeDisplay = {
   id?: string;
@@ -17,73 +27,75 @@ type ThemeDisplay = {
   api_failed?: boolean;
 };
 
+const initialThemes: ThemeDisplay[] = [
+  {
+    id: "1",
+    title: "Build new primary school building",
+    category: "Education",
+    ward: "Ward 4 - Downtown",
+    submission_count: 15,
+    priority_score: 8.4,
+    justification_score: 9,
+    rationale_text:
+      "Data shows Ward 4 schools are at 180% capacity with a student-teacher ratio of 58:1. Nearest alternative is 12.3 km away. This strongly justifies the high citizen demand. A development plan exists but is only proposed.",
+    validation_passed: true,
+    source_data_preview:
+      "[ReferenceData] metric_name: school_enrollment_capacity_ratio, metric_value: 1.80\n[ReferenceData] metric_name: student_teacher_ratio, metric_value: 58\n[ReferenceData] metric_name: nearest_alternative_school_km, metric_value: 12.3",
+  },
+  {
+    id: "2",
+    title: "Install water treatment plant",
+    category: "Water and Sanitation",
+    ward: "Ward 7 - Ambedkar Nagar",
+    submission_count: 32,
+    priority_score: 7.8,
+    justification_score: 8,
+    rationale_text:
+      "Only 38% of households have water connections and average supply is 2.5 hours per day. The Jal Jeevan Mission plan for this ward is still pending. Strong evidence supports citizen urgency.",
+    validation_passed: true,
+    source_data_preview:
+      "[ReferenceData] metric_name: household_water_connection_pct, metric_value: 38\n[ReferenceData] metric_name: avg_daily_supply_hours, metric_value: 2.5",
+  },
+  {
+    id: "3",
+    title: "Construct additional school wing",
+    category: "Education",
+    ward: "Ward 9 - Green Valley",
+    submission_count: 22,
+    priority_score: 4.2,
+    justification_score: 3,
+    rationale_text:
+      "Despite high complaint volume, data shows current schools are at 700% capacity and nearest alternative is 1.2 km away.",
+    validation_passed: false,
+    source_data_preview:
+      "[ReferenceData] metric_name: school_enrollment_capacity_ratio, metric_value: 0.42\n[ReferenceData] metric_name: nearest_alternative_school_km, metric_value: 1.2",
+  },
+];
+
 export default function MPThemesPage() {
-  const [themes, setThemes] = useState<ThemeDisplay[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [themes, setThemes] = useState<ThemeDisplay[]>(initialThemes);
   const [synthesizing, setSynthesizing] = useState(false);
-  const [expandedSources, setExpandedSources] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    // Initial mock data load (fallback in case DB is empty)
-    const mockData: ThemeDisplay[] = [
-      {
-        id: "1",
-        title: "Build new primary school building",
-        category: "Education",
-        ward: "Ward 4 - Downtown",
-        submission_count: 15,
-        priority_score: 8.4,
-        justification_score: 9,
-        rationale_text: "Data shows Ward 4 schools are at 180% capacity with a student-teacher ratio of 58:1. Nearest alternative is 12.3 km away. This strongly justifies the high citizen demand. A development plan exists but is only 'proposed'.",
-        validation_passed: true,
-        source_data_preview: `[ReferenceData] metric_name: school_enrollment_capacity_ratio, metric_value: 1.80\n[ReferenceData] metric_name: student_teacher_ratio, metric_value: 58\n[ReferenceData] metric_name: nearest_alternative_school_km, metric_value: 12.3`,
-      },
-      {
-        id: "2",
-        title: "Install water treatment plant",
-        category: "Water & Sanitation",
-        ward: "Ward 7 - Ambedkar Nagar",
-        submission_count: 32,
-        priority_score: 7.8,
-        justification_score: 8,
-        rationale_text: "Only 38% of households have water connections and average supply is 2.5 hours/day. The Jal Jeevan Mission plan for this ward is still pending. Strong evidence supports citizen urgency.",
-        validation_passed: true,
-        source_data_preview: `[ReferenceData] metric_name: household_water_connection_pct, metric_value: 38\n[ReferenceData] metric_name: avg_daily_supply_hours, metric_value: 2.5`,
-      },
-      {
-        id: "3",
-        title: "Construct additional school wing",
-        category: "Education",
-        ward: "Ward 9 - Green Valley",
-        submission_count: 22,
-        priority_score: 4.2,
-        justification_score: 3,
-        // HALLUCINATION INJECTED
-        rationale_text: "Despite high complaint volume, data shows current schools are at 700% capacity and nearest alternative is 1.2 km away.",
-        validation_passed: false,
-        source_data_preview: `[ReferenceData] metric_name: school_enrollment_capacity_ratio, metric_value: 0.42\n[ReferenceData] metric_name: nearest_alternative_school_km, metric_value: 1.2`,
-      }
-    ];
-
-    setThemes(mockData);
-    setLoading(false);
-  }, []);
+  const [expandedSources, setExpandedSources] = useState<Set<string>>(
+    new Set()
+  );
 
   const handleSynthesize = async () => {
     setSynthesizing(true);
     try {
       const response = await fetch("/api/synthesize", { method: "POST" });
       const data = await response.json();
-      
+
       if (data.theme) {
-        // Add new synthesized theme to the top of the list
-        setThemes(prev => [{ ...data.theme, id: Date.now().toString() }, ...prev]);
+        setThemes((prev) => [
+          { ...data.theme, id: Date.now().toString() },
+          ...prev,
+        ]);
       } else {
         alert(data.error || "Failed to synthesize.");
       }
     } catch (err) {
       console.error(err);
-      alert("API Error during synthesis.");
+      alert("API error during synthesis.");
     } finally {
       setSynthesizing(false);
     }
@@ -96,127 +108,183 @@ export default function MPThemesPage() {
     setExpandedSources(next);
   };
 
-  if (loading) {
-    return <div className="p-8 text-[var(--muted)] text-sm">Loading themes...</div>;
-  }
-
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[var(--card)] w-full">
-      <div className="p-6 border-b border-[var(--border)] bg-[var(--background)] flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-[var(--foreground)] mb-1">Themes & Priorities</h1>
-          <p className="text-sm text-[var(--muted)]">
-            AI clustered citizen demands ranked by the Evidence Reasoning Engine.
-          </p>
+    <div className="flex-1 bg-[var(--background)]">
+      <div className="border-b border-[var(--border)] bg-[var(--card)]">
+        <div className="app-container flex flex-col gap-5 py-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="section-eyebrow mb-2">Evidence reasoning engine</p>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Themes and Priorities
+            </h1>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted-strong)]">
+              AI-clustered citizen demands ranked by composite priority score,
+              with source data and validation states visible for staff review.
+            </p>
+          </div>
+
+          <button
+            onClick={handleSynthesize}
+            disabled={synthesizing}
+            className="btn-primary px-4 disabled:opacity-50"
+          >
+            {synthesizing ? (
+              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+            ) : (
+              <Wand2 size={16} aria-hidden="true" />
+            )}
+            {synthesizing ? "Synthesizing" : "Run AI synthesis"}
+          </button>
         </div>
-        
-        <button
-          onClick={handleSynthesize}
-          disabled={synthesizing}
-          className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded text-sm font-medium hover:bg-neutral-800 disabled:opacity-50 transition-colors"
-        >
-          {synthesizing ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
-          {synthesizing ? "Synthesizing AI Pipeline..." : "Run AI Synthesis (Demo)"}
-        </button>
       </div>
 
-      <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="app-container py-6">
+        <div className="grid gap-5">
           {themes.map((theme, index) => {
+            const itemKey = theme.id || String(index);
             const isApiFailed = theme.api_failed;
+            const isNewSynthesized =
+              Boolean(theme.id) &&
+              !theme.id?.includes("-") &&
+              Number(theme.id) > 1000000;
+            const expanded = expandedSources.has(itemKey);
 
             return (
-              <div key={theme.id || index} className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col relative overflow-hidden group">
-                {/* Highlight banner for newly synthesized items */}
-                {!theme.id?.includes("-") && parseInt(theme.id || "0") > 1000000 && (
-                  <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
-                )}
-
-                {/* Header */}
-                <div className="p-5 border-b border-[var(--border)] flex items-start justify-between bg-[var(--background)]">
+              <article
+                key={itemKey}
+                className="panel overflow-hidden"
+                aria-label={`Priority ${index + 1}: ${theme.title}`}
+              >
+                <div className="grid gap-5 border-b border-[var(--border)] bg-[var(--card)] p-5 lg:grid-cols-[1fr_220px]">
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-700">
-                        #{index + 1} Priority
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <span className="status-pill border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-action-hover)]">
+                        #{index + 1} priority
                       </span>
-                      <span className="text-xs text-[var(--muted)]">{theme.category} • {theme.ward}</span>
-                      
-                      {!theme.id?.includes("-") && parseInt(theme.id || "0") > 1000000 && (
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-700 flex items-center gap-1">
-                          <Wand2 size={10} /> Just Synthesized
+                      <span className="status-pill">
+                        {theme.category} / {theme.ward}
+                      </span>
+                      {isNewSynthesized && (
+                        <span className="status-pill border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-action-hover)]">
+                          <Wand2 size={12} aria-hidden="true" />
+                          Just synthesized
+                        </span>
+                      )}
+                      {theme.validation_passed === true && (
+                        <span className="status-pill border-[var(--success)] bg-[var(--success-soft)] text-[var(--success)]">
+                          <ShieldCheck size={12} aria-hidden="true" />
+                          Source aligned
                         </span>
                       )}
                     </div>
-                    <h2 className="text-lg font-medium text-[var(--foreground)]">{theme.title}</h2>
+                    <h2 className="text-xl font-semibold tracking-tight text-[var(--foreground)]">
+                      {theme.title}
+                    </h2>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-semibold text-[var(--foreground)]">
+
+                  <div className="rounded border border-[var(--border)] bg-[var(--card-hover)] p-4 lg:text-right">
+                    <p className="text-xs font-semibold uppercase text-[var(--muted)]">
+                      Composite score
+                    </p>
+                    <p className="mt-1 text-3xl font-semibold text-[var(--foreground)]">
                       {isApiFailed ? "--" : theme.priority_score.toFixed(1)}
-                    </div>
-                    <div className="text-xs text-[var(--muted)] uppercase tracking-wide">Composite Score</div>
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      Frequency, urgency, and evidence
+                    </p>
                   </div>
                 </div>
 
-                {/* Body */}
-                <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 bg-[var(--card)]">
-                  <div className="md:col-span-2 flex flex-col">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-2 flex items-center gap-1">
-                      <AlertCircle size={14} /> AI Evidence Rationale
-                    </h3>
-                    
+                <div className="grid gap-6 p-5 lg:grid-cols-[1fr_260px]">
+                  <section>
+                    <div className="mb-3 flex items-center gap-2">
+                      <AlertCircle
+                        size={16}
+                        className="text-[var(--accent-action)]"
+                        aria-hidden="true"
+                      />
+                      <h3 className="text-sm font-semibold">
+                        AI-generated evidence rationale
+                      </h3>
+                    </div>
+
                     {isApiFailed ? (
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded text-sm text-[var(--muted)]">
-                        AI analysis unavailable, showing raw data only.
+                      <div className="panel-muted p-4 text-sm text-[var(--muted-strong)]">
+                        AI analysis is unavailable. Review raw source data
+                        before using this item.
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm text-[var(--secondary)] leading-relaxed">
+                        <p className="text-sm leading-7 text-[var(--secondary)]">
                           {theme.rationale_text}
                         </p>
-                        
+
                         {theme.validation_passed === false && (
-                          <div className="mt-3 flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded px-2.5 py-1.5 w-fit">
-                            <ShieldAlert size={14} />
+                          <div className="mt-4 flex w-fit items-center gap-2 rounded border border-[var(--warning)] bg-[var(--warning-soft)] px-3 py-2 text-xs font-semibold text-[var(--warning)]">
+                            <ShieldAlert size={14} aria-hidden="true" />
                             Unverified figure, review manually
                           </div>
                         )}
 
-                        {(theme.source_data_preview || theme.id) && (
-                          <div className="mt-4 border-t border-[var(--border)] pt-3">
-                            <button 
-                              onClick={() => toggleSource(theme.id || String(index))}
-                              className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-                            >
-                              {expandedSources.has(theme.id || String(index)) ? <ChevronDown size={14}/> : <ChevronRight size={14}/>}
-                              View Source Data
-                            </button>
-                            
-                            <div 
-                              className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSources.has(theme.id || String(index)) ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0 mt-0"}`}
-                            >
-                              <div className="p-3 bg-[var(--background)] border border-[var(--border)] rounded font-mono text-[11px] text-[var(--secondary)] whitespace-pre-wrap shadow-inner">
-                                {theme.source_data_preview || "Live data sourced from gemini_audit_log constraints."}
+                        <div className="mt-5 border-t border-[var(--border)] pt-4">
+                          <button
+                            onClick={() => toggleSource(itemKey)}
+                            className="inline-flex items-center gap-2 rounded px-1 py-1 text-sm font-semibold text-[var(--muted-strong)] transition-colors hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-action)]"
+                            aria-expanded={expanded}
+                          >
+                            {expanded ? (
+                              <ChevronDown size={15} aria-hidden="true" />
+                            ) : (
+                              <ChevronRight size={15} aria-hidden="true" />
+                            )}
+                            View source data
+                          </button>
+
+                          {expanded && (
+                            <div className="mt-3 rounded border border-[var(--border)] bg-[var(--card-hover)] p-3">
+                              <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase text-[var(--muted)]">
+                                <Database size={13} aria-hidden="true" />
+                                Reference data preview
                               </div>
+                              <pre className="max-h-72 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-[var(--secondary)]">
+                                {theme.source_data_preview ||
+                                  "Source preview was not returned by this synthesis response. Check server audit logs for full prompt inputs."}
+                              </pre>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </>
                     )}
-                  </div>
-                  <div className="border-t md:border-t-0 md:border-l border-[var(--border)] pt-4 md:pt-0 md:pl-6 space-y-4">
-                    <div>
-                      <div className="text-lg font-medium text-[var(--foreground)]">
-                        {isApiFailed ? "--" : `${theme.justification_score}/10`}
+                  </section>
+
+                  <aside className="grid gap-3 border-t border-[var(--border)] pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+                    <div className="metric-panel">
+                      <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase text-[var(--muted)]">
+                        <Scale size={13} aria-hidden="true" />
+                        Evidence score
                       </div>
-                      <div className="text-xs text-[var(--muted)]">Evidence Score (45% weight)</div>
+                      <p className="text-2xl font-semibold text-[var(--foreground)]">
+                        {isApiFailed ? "--" : `${theme.justification_score}/10`}
+                      </p>
+                      <p className="mt-1 text-xs text-[var(--muted)]">
+                        45% composite weight
+                      </p>
                     </div>
-                    <div>
-                      <div className="text-lg font-medium text-[var(--foreground)]">{theme.submission_count}</div>
-                      <div className="text-xs text-[var(--muted)]">Submissions (30% weight)</div>
+
+                    <div className="metric-panel">
+                      <p className="text-xs font-semibold uppercase text-[var(--muted)]">
+                        Citizen submissions
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold text-[var(--foreground)]">
+                        {theme.submission_count}
+                      </p>
+                      <p className="mt-1 text-xs text-[var(--muted)]">
+                        30% composite weight
+                      </p>
                     </div>
-                  </div>
+                  </aside>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
